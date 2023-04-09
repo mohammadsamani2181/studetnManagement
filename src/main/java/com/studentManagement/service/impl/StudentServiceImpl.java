@@ -1,5 +1,6 @@
 package com.studentManagement.service.impl;
 
+import com.studentManagement.exception.sourceNotFoundException;
 import com.studentManagement.model.Student;
 import com.studentManagement.repository.StudentRepository;
 import com.studentManagement.service.StudentService;
@@ -24,5 +25,32 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
+    }
+
+    @Override
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id).orElseThrow(
+                () -> new sourceNotFoundException("Student", "Id", id)
+        );
+    }
+
+    @Override
+    public Student updateStudent(Long id, Student newStudent) {
+        Student existingStudent = studentRepository.findById(id).orElseThrow(
+                () -> new sourceNotFoundException("Student", "Id", id)
+        );
+        existingStudent.setFirstName(newStudent.getFirstName());
+        existingStudent.setLastName(newStudent.getLastName());
+        existingStudent.setEmail(newStudent.getEmail());
+
+        return studentRepository.save(existingStudent);
+    }
+
+    @Override
+    public void deleteStudentById(Long id) {
+        Student existingStudent = studentRepository.findById(id).orElseThrow(
+                () -> new sourceNotFoundException("Student", "Id", id)
+        );
+        studentRepository.delete(existingStudent);
     }
 }
