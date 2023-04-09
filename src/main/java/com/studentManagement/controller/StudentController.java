@@ -22,8 +22,8 @@ public class StudentController {
 
 
     @PostMapping
-    public ResponseEntity<Student> saveStudent(Student student) {
-        return new ResponseEntity<>(studentService.saveStudent(student), HttpStatus.OK);
+    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+        return new ResponseEntity<>(studentService.saveStudent(student), HttpStatus.CREATED);
     }
 
     @GetMapping
