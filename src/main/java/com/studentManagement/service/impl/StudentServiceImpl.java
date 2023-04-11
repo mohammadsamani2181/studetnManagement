@@ -2,7 +2,9 @@ package com.studentManagement.service.impl;
 
 import com.studentManagement.exception.sourceNotFoundException;
 import com.studentManagement.model.Student;
+import com.studentManagement.model.StudentLevel;
 import com.studentManagement.repository.StudentRepository;
+import com.studentManagement.service.GradeStudent;
 import com.studentManagement.service.StudentService;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student saveStudent(Student student) {
+        GradeStudent strategy = null;
+        if (student.getStudentLevel() == StudentLevel.GENIUS) {
+            strategy = new GradeGeniusStudent();
+        }
+        else {
+            strategy = new GradeWeakStudent();
+        }
+        student.setScore(strategy.grade());
+
         return studentRepository.save(student);
     }
 
