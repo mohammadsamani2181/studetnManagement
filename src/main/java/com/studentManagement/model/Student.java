@@ -1,7 +1,14 @@
 package com.studentManagement.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+@Data
 @Entity
 @Table(name = "students")
 public class Student {
@@ -15,46 +22,15 @@ public class Student {
     private String lastName;
     @Column(name = "email", nullable = false)
     private String email;
-
-
-    public Student() {
-    }
-
-    public Student(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    @Column(name = "level", nullable = false)
+    @Enumerated(value = EnumType.ORDINAL)
+    private StudentLevel studentLevel;
+    @Column(name = "score", nullable = false)
+    private int score;
+    @Column
+    @CreationTimestamp
+    private LocalDateTime createDateTime;
+    @Column
+    @UpdateTimestamp
+    private LocalDateTime updateDateTime;
 }
