@@ -25,8 +25,16 @@ public class StudentServiceImpl implements StudentService {
         if (student.getStudentLevel() == StudentLevel.GENIUS) {
             strategy = new GradeGeniusStudent();
         }
-        else {
+        else if (student.getStudentLevel() == StudentLevel.WEAK){
             strategy = new GradeWeakStudent();
+        }
+        else {
+            strategy = new GradeStudent() {
+                @Override
+                public int grade() {
+                    return GradeStudent.super.grade();
+                }
+            };
         }
         student.setScore(strategy.grade());
 
