@@ -6,11 +6,16 @@ import com.studentManagement.model.StudentLevel;
 import com.studentManagement.repository.StudentRepository;
 import com.studentManagement.service.GradeStudent;
 import com.studentManagement.service.StudentService;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@EnableScheduling
+@Component
 public class StudentServiceImpl implements StudentService {
 
     private StudentRepository studentRepository;
@@ -71,5 +76,24 @@ public class StudentServiceImpl implements StudentService {
                 () -> new sourceNotFoundException("Student", "Id", id)
         );
         studentRepository.delete(existingStudent);
+    }
+
+    @Override
+    @Scheduled(fixedRate = 10000)
+    public void printSpecificStudents() {
+        List<Student> students = findAllStudents();
+        for (Student student : filterList(students)) {
+            System.out.println(student);
+        }
+    }
+
+    public List<Student> findAllStudents() {
+
+        List<Student> students = studentRepository.findAllStudents();
+        return students;
+    }
+
+    private List<Student> filterList(List<Student> students) {
+        return students.stream().filter(e -> e.getFirstName().contains("ali")).toList();
     }
 }
