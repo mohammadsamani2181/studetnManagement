@@ -5,6 +5,6 @@ import com.studentManagement.service.GradeStudent;
 public class GradeGeniusStudent implements GradeStudent {
     @Override
     public int grade() {
-        return 10;
+        return 20;
     }
 }
