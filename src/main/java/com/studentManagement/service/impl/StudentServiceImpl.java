@@ -6,6 +6,7 @@ import com.studentManagement.model.StudentLevel;
 import com.studentManagement.repository.StudentRepository;
 import com.studentManagement.service.GradeStudent;
 import com.studentManagement.service.StudentService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -95,5 +96,13 @@ public class StudentServiceImpl implements StudentService {
 
     private List<Student> filterList(List<Student> students) {
         return students.stream().filter(e -> e.getFirstName().contains("ali")).toList();
+    }
+
+    @PostConstruct
+    private void printAllTheStudents() {
+        List<Student> students = findAllStudents();
+        for (Student student : students) {
+            System.out.println(student);
+        }
     }
 }
