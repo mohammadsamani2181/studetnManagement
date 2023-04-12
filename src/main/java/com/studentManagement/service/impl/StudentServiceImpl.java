@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @EnableScheduling
@@ -83,9 +84,7 @@ public class StudentServiceImpl implements StudentService {
     @Scheduled(fixedRate = 10000)
     public void printSpecificStudents() {
         List<Student> students = findAllStudents();
-        for (Student student : filterList(students)) {
-            System.out.println(student);
-        }
+       filterList(students).forEach(System.out::println);
     }
 
     public List<Student> findAllStudents() {
@@ -94,8 +93,8 @@ public class StudentServiceImpl implements StudentService {
         return students;
     }
 
-    private List<Student> filterList(List<Student> students) {
-        return students.stream().filter(e -> e.getFirstName().contains("ali")).toList();
+    private Stream<Long> filterList(List<Student> students) {
+        return students.stream().filter(e -> e.getFirstName().contains("ali")).map(Student::getId);
     }
 
     @PostConstruct
