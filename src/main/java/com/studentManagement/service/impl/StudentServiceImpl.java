@@ -26,22 +26,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student saveStudent(Student student) {
-        GradeStudent strategy = null;
-        if (student.getStudentLevel() == StudentLevel.GENIUS) {
-            strategy = new GradeGeniusStudent();
-        }
-        else if (student.getStudentLevel() == StudentLevel.WEAK){
-            strategy = new GradeWeakStudent();
-        }
-        else {
-            strategy = new GradeStudent() {
-                @Override
-                public int grade() {
-                    return GradeStudent.super.grade();
-                }
-            };
-        }
-        student.setScore(strategy.grade());
+        chooseStrategy(student);
 
         return studentRepository.save(student);
     }
@@ -58,14 +43,19 @@ public class StudentServiceImpl implements StudentService {
         );
     }
 
+
+    //*********** question: is it better to call another method? **********
     @Override
     public Student updateStudent(Long id, Student newStudent) {
         Student existingStudent = studentRepository.findById(id).orElseThrow(
                 () -> new sourceNotFoundException("Student", "Id", id)
         );
+        chooseStrategy(newStudent);
+
         existingStudent.setFirstName(newStudent.getFirstName());
         existingStudent.setLastName(newStudent.getLastName());
         existingStudent.setEmail(newStudent.getEmail());
+        existingStudent.setScore(newStudent.getScore());
 
         return studentRepository.save(existingStudent);
     }
@@ -88,12 +78,31 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public List<Student> findAllStudents() {
-
         List<Student> students = studentRepository.findAllStudents();
         return students;
     }
 
     private List<Student> filterList(List<Student> students) {
         return students.stream().filter(e -> e.getFirstName().contains("ali")).toList();
+    }
+
+    private void chooseStrategy(Student student) {
+        GradeStudent strategy = null;
+        if (student.getStudentLevel() == StudentLevel.GENIUS) {
+            strategy = new GradeGeniusStudent();
+        }
+        else if (student.getStudentLevel() == StudentLevel.WEAK){
+            strategy = new GradeWeakStudent();
+        }
+        else {
+            strategy = new GradeStudent() {
+                @Override
+                public int grade() {
+                    return GradeStudent.super.grade();
+                }
+            };
+        }
+
+        student.setScore(strategy.grade());
     }
 }
