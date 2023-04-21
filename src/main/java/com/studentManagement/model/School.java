@@ -13,10 +13,9 @@ import java.util.List;
 @Table(name = "studentM_School")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class School extends BaseEntity{
-    @Column(name = "name", nullable = false)
+    private static School instance;
+    @Column(name = "name")
     private String name;
 
     @OneToMany(targetEntity = Student.class,
@@ -34,7 +33,17 @@ public class School extends BaseEntity{
 //    @JoinColumn(name = "school_name")
     List<Teacher> teachers = new ArrayList<>();
 
-    public School(String name) {
-        this.name = name;
+    private School() {
+    }
+
+    public static School getInstance() {
+        if (instance == null) {
+            synchronized (School.class) {
+                if (instance == null) {
+                    instance = new School();
+                }
+            }
+        }
+        return instance;
     }
 }
