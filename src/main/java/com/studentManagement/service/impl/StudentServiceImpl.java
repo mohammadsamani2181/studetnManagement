@@ -69,7 +69,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 10000)
     public void printSpecificStudents() {
         List<Student> students = findAllStudents();
         for (Student student : filterList(students)) {
