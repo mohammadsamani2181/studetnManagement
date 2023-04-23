@@ -1,17 +1,19 @@
 package com.studentManagement.service.impl;
 
 import com.studentManagement.exception.sourceNotFoundException;
+import com.studentManagement.model.DTO.response.StudentDTOResponse;
 import com.studentManagement.model.Student;
 import com.studentManagement.model.StudentLevel;
 import com.studentManagement.repository.StudentRepository;
 import com.studentManagement.service.GradeStudent;
 import com.studentManagement.service.StudentService;
+import com.studentManagement.service.mapper.StudentDTOResponseMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @EnableScheduling
@@ -19,26 +21,33 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     private StudentRepository studentRepository;
+    private StudentDTOResponseMapper studentDTOResponseMapper;
 
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, StudentDTOResponseMapper studentDTOResponseMapper) {
         this.studentRepository = studentRepository;
+        this.studentDTOResponseMapper = studentDTOResponseMapper;
     }
 
     @Override
-    public Student saveStudent(Student student) {
+    public StudentDTOResponse saveStudent(Student student) {
         chooseStrategy(student);
 
-        return studentRepository.save(student);
+        return studentDTOResponseMapper.apply(studentRepository.save(student));
     }
 
     @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<StudentDTOResponse> getAllStudents() {
+        return studentRepository.findAll()
+                .stream()
+                .map(studentDTOResponseMapper)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id).orElseThrow(
+    public StudentDTOResponse getStudentById(Long id) {
+        return studentRepository.findById(id)
+                .map(studentDTOResponseMapper)
+                .orElseThrow(
                 () -> new sourceNotFoundException("Student", "Id", id)
         );
     }
@@ -46,7 +55,7 @@ public class StudentServiceImpl implements StudentService {
 
     //*********** question: is it better to call another method? **********
     @Override
-    public Student updateStudent(Long id, Student newStudent) {
+    public StudentDTOResponse updateStudent(Long id, Student newStudent) {
         Student existingStudent = studentRepository.findById(id).orElseThrow(
                 () -> new sourceNotFoundException("Student", "Id", id)
         );
@@ -57,7 +66,7 @@ public class StudentServiceImpl implements StudentService {
         existingStudent.setEmail(newStudent.getEmail());
         existingStudent.setScore(newStudent.getScore());
 
-        return studentRepository.save(existingStudent);
+        return studentDTOResponseMapper.apply(studentRepository.save(existingStudent));
     }
 
     @Override
@@ -77,7 +86,7 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    public List<Student> findAllStudents() {
+    private List<Student> findAllStudents() {
         List<Student> students = studentRepository.findAllStudents();
         return students;
     }
