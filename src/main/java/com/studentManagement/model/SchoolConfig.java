@@ -1,30 +1,36 @@
 package com.studentManagement.model;
 
-import com.studentManagement.model.School;
-import com.studentManagement.service.SchoolService;
-import jakarta.annotation.PostConstruct;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@RequiredArgsConstructor
 public class SchoolConfig {
-    private School instance;
-    private final SchoolService schoolService;
+    private static SchoolConfig instance;
+    private School school; //
 
-    @Bean
-    @PostConstruct
-    public School getTheSchool() {
-        instance = schoolService.getTheSchool();
+    private SchoolConfig() {
+    }
 
+    public School getSchool() {
+        return school;
+    }
+
+    public static SchoolConfig getInstance() {
         if (instance == null) {
-            instance = School.getInstance();
-            schoolService.saveOrUpdateSchool(instance);
+            synchronized (School.class) {
+                if (instance == null) {
+                    instance = new SchoolConfig();
+                }
+            }
         }
-
         return instance;
     }
+
+    public boolean isSchoolExist(School existingSchool) {
+        this.school = existingSchool;
+
+        if (this.school == null) {
+            this.school = new School();
+            return false;
+        }
+
+        return true;
+    }
+
 }
