@@ -1,16 +1,17 @@
 package com.studentManagement.service;
 
+import com.studentManagement.model.DTO.request.IdDTORequest;
+import com.studentManagement.model.DTO.request.StudentDTOSaveRequest;
 import com.studentManagement.model.DTO.response.StudentDTOResponse;
-import com.studentManagement.model.Student;
 
 import java.util.List;
 
 public interface StudentService {
 
-    StudentDTOResponse saveStudent(Student student);
+    StudentDTOResponse saveStudent(StudentDTOSaveRequest studentDTOSaveRequest);
     List<StudentDTOResponse> getAllStudents();
-    StudentDTOResponse getStudentById(Long id);
-    StudentDTOResponse updateStudent(Long id, Student newStudent);
-    void deleteStudentById(Long id);
     void printSpecificStudents();
+    StudentDTOResponse addLessons(IdDTORequest lessonsIdList, Long studentId);
+    StudentDTOResponse deleteLesson(Long lessonId, Long studentId);
+    StudentDTOResponse addOrUpdateTeacher(IdDTORequest teacherId, Long studentId);
 }
