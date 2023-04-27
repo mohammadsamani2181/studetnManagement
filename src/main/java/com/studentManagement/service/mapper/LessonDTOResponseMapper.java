@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 @Service
@@ -24,9 +25,7 @@ public class LessonDTOResponseMapper implements Function<Lesson, LessonDTORespon
             return null;
         }
 
-    public List<LessonDTOResponse> applyAll(List<Lesson> lessons) {
         List<LessonDTOResponse> lessonDTOResponseList = new ArrayList<>();
-
         for (Lesson lesson : lessons) {
             lessonDTOResponseList.add(apply(lesson));
         }
