@@ -1,5 +1,6 @@
 package com.studentManagement.model.DTO.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeacherDTORequest {
+public class TeacherDTOSaveRequest {
+    @NotNull(message = "firstName field cannot be null!!")
     private String firstName;
+    @NotNull(message = "lastName field cannot be null!!")
     private String lastName;
+    @NotNull(message = "email field cannot be null!!")
     private String email;
-    private List<LessonDTORequest> lessonDTORequestList;
+    private List<Long> lessonsIdList;
 }
