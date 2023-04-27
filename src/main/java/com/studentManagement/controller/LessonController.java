@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
+@RequestMapping("/school/lessons")
 public class LessonController {
     private LessonService lessonService;
 
@@ -20,7 +20,7 @@ public class LessonController {
         this.lessonService = lessonService;
     }
 
-    @PostMapping("/lessons")
+    @PostMapping
     public ResponseEntity<LessonDTOResponse> saveLesson (@RequestBody LessonDTORequest lessonDTORequest) {
         return new ResponseEntity<>(lessonService.saveLesson(lessonDTORequest), HttpStatus.CREATED);
     }
