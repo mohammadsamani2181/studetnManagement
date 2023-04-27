@@ -15,7 +15,12 @@ public class LessonServiceImpl implements LessonService {
     private LessonRepository lessonRepository;
     private LessonDTORequestMapper lessonDTORequestMapper;
     private LessonDTOResponseMapper lessonDTOResponseMapper;
-    public LessonServiceImpl(LessonRepository lessonRepository, LessonDTORequestMapper lessonDTORequestMapper, SchoolConfig schoolConfig, LessonDTOResponseMapper lessonDTOResponseMapper) {
+
+
+    public LessonServiceImpl(LessonRepository lessonRepository,
+                             LessonDTORequestMapper lessonDTORequestMapper,
+                             LessonDTOResponseMapper lessonDTOResponseMapper) {
+
         this.lessonRepository = lessonRepository;
         this.lessonDTORequestMapper = lessonDTORequestMapper;
         this.lessonDTOResponseMapper = lessonDTOResponseMapper;
