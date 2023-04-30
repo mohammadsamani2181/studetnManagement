@@ -28,22 +28,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student saveStudent(Student student) {
-        GradeStudent strategy = null;
-        if (student.getStudentLevel() == StudentLevel.GENIUS) {
-            strategy = new GradeGeniusStudent();
-        }
-        else if (student.getStudentLevel() == StudentLevel.WEAK){
-            strategy = new GradeWeakStudent();
-        }
-        else {
-            strategy = new GradeStudent() {
-                @Override
-                public int grade() {
-                    return GradeStudent.super.grade();
-                }
-            };
-        }
-        student.setScore(strategy.grade());
+        chooseStrategy(student);
 
         return studentRepository.save(student);
     }
@@ -60,14 +45,19 @@ public class StudentServiceImpl implements StudentService {
         );
     }
 
+
+    //*********** question: is it better to call another method? **********
     @Override
     public Student updateStudent(Long id, Student newStudent) {
         Student existingStudent = studentRepository.findById(id).orElseThrow(
                 () -> new sourceNotFoundException("Student", "Id", id)
         );
+        chooseStrategy(newStudent);
+
         existingStudent.setFirstName(newStudent.getFirstName());
         existingStudent.setLastName(newStudent.getLastName());
         existingStudent.setEmail(newStudent.getEmail());
+        existingStudent.setScore(newStudent.getScore());
 
         return studentRepository.save(existingStudent);
     }
@@ -81,14 +71,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 10000)
     public void printSpecificStudents() {
         List<Student> students = findAllStudents();
        filterList(students).forEach(System.out::println);
     }
 
     public List<Student> findAllStudents() {
-
         List<Student> students = studentRepository.findAllStudents();
         return students;
     }
@@ -103,5 +92,25 @@ public class StudentServiceImpl implements StudentService {
         for (Student student : students) {
             System.out.println(student);
         }
+    }
+
+    private void chooseStrategy(Student student) {
+        GradeStudent strategy = null;
+        if (student.getStudentLevel() == StudentLevel.GENIUS) {
+            strategy = new GradeGeniusStudent();
+        }
+        else if (student.getStudentLevel() == StudentLevel.WEAK){
+            strategy = new GradeWeakStudent();
+        }
+        else {
+            strategy = new GradeStudent() {
+                @Override
+                public int grade() {
+                    return GradeStudent.super.grade();
+                }
+            };
+        }
+
+        student.setScore(strategy.grade());
     }
 }
