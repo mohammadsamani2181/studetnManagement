@@ -1,15 +1,17 @@
 package com.studentManagement.controller;
 
-import com.studentManagement.model.Student;
+import com.studentManagement.model.DTO.request.IdDTORequest;
+import com.studentManagement.model.DTO.request.StudentDTOSaveRequest;
+import com.studentManagement.model.DTO.response.StudentDTOResponse;
 import com.studentManagement.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Validated
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/school/students")
 public class StudentController {
     private StudentService studentService;
 
@@ -19,29 +21,31 @@ public class StudentController {
 
 
     @PostMapping
-    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
-        return new ResponseEntity<>(studentService.saveStudent(student), HttpStatus.CREATED);
+    public ResponseEntity<StudentDTOResponse> saveStudent(@RequestBody @Valid StudentDTOSaveRequest studentDTOSaveRequest) {
+        return new ResponseEntity<>(studentService.saveStudent(studentDTOSaveRequest), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentDTOResponse> getAllStudents() {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Student> getStudentById (@PathVariable(value = "id") Long id) {
-        return new ResponseEntity<>(studentService.getStudentById(id), HttpStatus.OK);
+    @PatchMapping("{studentId}/lessons")
+    public ResponseEntity<StudentDTOResponse> addLesson(@RequestBody IdDTORequest lessonsIdList,
+                                                        @PathVariable("studentId") Long studentId) {
+        return new ResponseEntity<>(studentService.addLessons(lessonsIdList, studentId), HttpStatus.OK);
     }
 
-
-    @PutMapping("{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable(value = "id") Long id, @RequestBody Student newStudent) {
-        return new ResponseEntity<>(studentService.updateStudent(id, newStudent), HttpStatus.OK);
+    @PatchMapping("{studentId}/lessons/{lessonId}")
+    public ResponseEntity<StudentDTOResponse> deleteLesson(@PathVariable("lessonId") Long lessonId,
+                                                           @PathVariable("studentId") Long studentId) {
+        return new ResponseEntity<>(studentService.deleteLesson(lessonId, studentId), HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteStudentById (@PathVariable(value = "id") Long id) {
-        studentService.deleteStudentById(id);
-        return new ResponseEntity<>("Successfully Deleted", HttpStatus.OK);
+    @PatchMapping("{studentId}/teacher")
+    public ResponseEntity<StudentDTOResponse> addOrUpdateTeacher(@RequestBody IdDTORequest teacherId,
+                                                                 @PathVariable("studentId") Long studentId) {
+        return new ResponseEntity<>(studentService.addOrUpdateTeacher(teacherId, studentId), HttpStatus.OK);
     }
+
 }

@@ -1,49 +1,38 @@
 package com.studentManagement.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@SuperBuilder
 @Entity
 @Table(name = "studentM_School")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class School extends BaseEntity{
-    private static School instance;
     @Column(name = "name")
     private String name;
 
+    @Builder.Default
     @OneToMany(targetEntity = Student.class,
                fetch = FetchType.LAZY,
                cascade = {CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "school_id")
-//    @JoinColumn(name = "school_name")
-    List<Student> students = new ArrayList<>();
+    private Set<Student> students = new HashSet<>();
 
 
+    @Builder.Default
     @OneToMany(targetEntity = Teacher.class,
                fetch = FetchType.LAZY,
-               cascade = CascadeType.ALL)
+               cascade = {CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "school_id")
-//    @JoinColumn(name = "school_name")
-    List<Teacher> teachers = new ArrayList<>();
+    private Set<Teacher> teachers = new HashSet<>();
 
-    private School() {
-    }
-
-    public static School getInstance() {
-        if (instance == null) {
-            synchronized (School.class) {
-                if (instance == null) {
-                    instance = new School();
-                }
-            }
-        }
-        return instance;
-    }
 }

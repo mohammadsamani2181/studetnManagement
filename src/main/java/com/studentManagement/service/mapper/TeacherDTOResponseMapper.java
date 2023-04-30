@@ -10,13 +10,15 @@ import java.util.function.Function;
 public class TeacherDTOResponseMapper implements Function<Teacher, TeacherDTOResponse> {
     @Override
     public TeacherDTOResponse apply(Teacher teacher) {
-        return new TeacherDTOResponse(
-                teacher.getId(),
-                teacher.getFirstName(),
-                teacher.getLastName(),
-                teacher.getEmail(),
-                new SchoolDTOResponseMapper().apply(teacher.getSchool()),
-                new LessonDTOResponseMapper().applyAll(teacher.getLessons())
-        );
+        return TeacherDTOResponse.builder()
+                .id(teacher.getId())
+                .firstName(teacher.getFirstName())
+                .lastName(teacher.getLastName())
+                .email(teacher.getEmail())
+                .schoolDTOResponse(new SchoolDTOResponseMapper()
+                .apply(teacher.getSchool()))
+                .lessonDTOResponse(new LessonDTOResponseMapper()
+                .applyAll(teacher.getLessons()))
+                .build();
     }
 }

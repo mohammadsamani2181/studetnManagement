@@ -6,22 +6,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 @Service
 public class LessonDTOResponseMapper implements Function<Lesson, LessonDTOResponse> {
     @Override
     public LessonDTOResponse apply(Lesson lesson) {
-        return new LessonDTOResponse(
-             lesson.getId(),
-             lesson.getType(),
-             lesson.getSubject()
-        );
+        return LessonDTOResponse.builder()
+                .id(lesson.getId())
+                .type(lesson.getType())
+                .subject(lesson.getSubject())
+                .build();
     }
 
-    public List<LessonDTOResponse> applyAll(List<Lesson> lessons) {
-        List<LessonDTOResponse> lessonDTOResponseList = new ArrayList<>();
+    public List<LessonDTOResponse> applyAll(Set<Lesson> lessons) {
+        if (lessons == null) {
+            return null;
+        }
 
+        List<LessonDTOResponse> lessonDTOResponseList = new ArrayList<>();
         for (Lesson lesson : lessons) {
             lessonDTOResponseList.add(apply(lesson));
         }

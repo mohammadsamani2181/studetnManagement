@@ -10,9 +10,9 @@ import java.util.function.Function;
 public class SchoolDTOResponseMapper implements Function<School, SchoolDTOResponse> {
     @Override
     public SchoolDTOResponse apply(School school) {
-        return new SchoolDTOResponse(
-                school.getId(),
-                school.getName()
-        );
+        return SchoolDTOResponse.builder()
+                .id(school.getId())
+                .name(school.getName())
+                .build();
     }
 }
