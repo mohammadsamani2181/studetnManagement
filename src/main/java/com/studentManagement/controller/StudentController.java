@@ -1,5 +1,6 @@
 package com.studentManagement.controller;
 
+import com.studentManagement.model.DTO.response.StudentDTOResponse;
 import com.studentManagement.model.Student;
 import com.studentManagement.service.StudentService;
 import org.springframework.http.HttpStatus;
@@ -19,23 +20,23 @@ public class StudentController {
 
 
     @PostMapping
-    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+    public ResponseEntity<StudentDTOResponse> saveStudent(@RequestBody Student student) {
         return new ResponseEntity<>(studentService.saveStudent(student), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentDTOResponse> getAllStudents() {
         return studentService.getAllStudents();
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudentById (@PathVariable(value = "id") Long id) {
+    public ResponseEntity<StudentDTOResponse> getStudentById (@PathVariable(value = "id") Long id) {
         return new ResponseEntity<>(studentService.getStudentById(id), HttpStatus.OK);
     }
 
 
     @PutMapping("{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable(value = "id") Long id, @RequestBody Student newStudent) {
+    public ResponseEntity<StudentDTOResponse> updateStudent(@PathVariable(value = "id") Long id, @RequestBody Student newStudent) {
         return new ResponseEntity<>(studentService.updateStudent(id, newStudent), HttpStatus.OK);
     }
 
