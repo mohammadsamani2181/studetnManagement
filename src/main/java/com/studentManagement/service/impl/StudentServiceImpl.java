@@ -9,12 +9,14 @@ import com.studentManagement.model.Student;
 import com.studentManagement.model.Teacher;
 import com.studentManagement.repository.StudentRepository;
 import com.studentManagement.service.StudentService;
+
 import com.studentManagement.service.mapper.StudentDTOResponseMapper;
 import com.studentManagement.service.mapper.StudentDTOSaveRequestMapper;
 import com.studentManagement.service.validator.LessonValidator;
 import com.studentManagement.service.validator.StudentValidator;
 import com.studentManagement.service.validator.TeacherValidator;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Service
 @EnableScheduling
@@ -85,9 +88,7 @@ public class StudentServiceImpl implements StudentService {
 //    @Scheduled(fixedRate = 10000)
     public void printSpecificStudents() {
         List<Student> students = findAllStudents();
-        for (Student student : filterList(students)) {
-            System.out.println(student);
-        }
+       filterList(students).forEach(System.out::println);
     }
 
     @Override
@@ -109,6 +110,7 @@ public class StudentServiceImpl implements StudentService {
         student.get().getLessons().addAll(lessons);
 
         return studentDTOResponseMapper.apply(studentRepository.save(student.get()));
+
     }
 
     @Override
