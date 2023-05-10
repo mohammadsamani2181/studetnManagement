@@ -4,8 +4,10 @@ import com.studentManagement.model.DTO.request.IdDTORequest;
 import com.studentManagement.model.DTO.request.StudentDTOSaveRequest;
 import com.studentManagement.model.DTO.response.StudentDTOResponse;
 import com.studentManagement.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
