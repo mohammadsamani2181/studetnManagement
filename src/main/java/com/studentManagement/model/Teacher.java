@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @SuperBuilder
@@ -16,7 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Teacher extends BaseUser{
+public class Teacher extends BasicUserInformation{
     @Builder.Default
     @ManyToMany(targetEntity = Lesson.class,
                 fetch = FetchType.LAZY)
@@ -33,12 +31,18 @@ public class Teacher extends BaseUser{
                fetch = FetchType.LAZY,
                cascade = {CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "teacher_id")
-    private Set<Student> students = new HashSet<>();// use set
+    private Set<Student> students = new HashSet<>();
 
+
+    @OneToOne(targetEntity = User.class,
+            fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User info;
 
     @ManyToOne(targetEntity = School.class,
             fetch = FetchType.LAZY)
     private School school;
+
 
     public void deleteLesson(Lesson lesson) {
         this.getLessons().remove(lesson);
