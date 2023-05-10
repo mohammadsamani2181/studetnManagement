@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @SuperBuilder
@@ -34,5 +32,12 @@ public class School extends BaseEntity{
                cascade = {CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "school_id")
     private Set<Teacher> teachers = new HashSet<>();
+
+
+    @OneToOne(targetEntity = Principal.class,
+              fetch = FetchType.LAZY,
+              cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+    @JoinColumn(name = "principal_id")
+    private Principal principal;
 
 }
