@@ -3,16 +3,10 @@ package com.studentManagement.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @SuperBuilder
@@ -22,13 +16,14 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student extends BaseUser{
+public class Student extends BasicUserInformation {
+
     @Column(name = "level", nullable = false)
     @Enumerated(value = EnumType.ORDINAL)
     private StudentLevel studentLevel;
 
     @Column(name = "score", nullable = false)
-    private int score;
+    private int score = 0;
 
 
     @Builder.Default
@@ -49,9 +44,15 @@ public class Student extends BaseUser{
     private Teacher teacher;
 
 
+    @OneToOne(targetEntity = User.class,
+            fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User info;
+
     @ManyToOne(targetEntity = School.class,
                fetch = FetchType.LAZY)
     private School school;
+
 
     public void deleteLesson(Lesson lesson) {
         if (!this.getLessons().contains(lesson)) {
