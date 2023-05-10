@@ -4,7 +4,7 @@ import com.studentManagement.model.DTO.request.IdDTORequest;
 import com.studentManagement.model.DTO.request.StudentDTOSaveRequest;
 import com.studentManagement.model.DTO.response.StudentDTOResponse;
 import com.studentManagement.model.Lesson;
-import com.studentManagement.model.SchoolConfig;
+import com.studentManagement.config.SchoolConfig;
 import com.studentManagement.model.Student;
 import com.studentManagement.model.Teacher;
 import com.studentManagement.repository.StudentRepository;
@@ -88,7 +88,7 @@ public class StudentServiceImpl implements StudentService {
 //    @Scheduled(fixedRate = 10000)
     public void printSpecificStudents() {
         List<Student> students = findAllStudents();
-       filterList(students).forEach(System.out::println);
+        filterList(students).forEach(System.out::println);
     }
 
     @Override
