@@ -3,7 +3,6 @@ package com.studentManagement.service.impl;
 import com.studentManagement.model.DTO.request.LessonDTORequest;
 import com.studentManagement.model.DTO.response.LessonDTOResponse;
 import com.studentManagement.model.Lesson;
-import com.studentManagement.model.SchoolConfig;
 import com.studentManagement.repository.LessonRepository;
 import com.studentManagement.service.LessonService;
 import com.studentManagement.service.mapper.LessonDTORequestMapper;
