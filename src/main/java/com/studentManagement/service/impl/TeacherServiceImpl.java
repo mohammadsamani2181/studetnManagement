@@ -5,7 +5,7 @@ import com.studentManagement.model.DTO.request.TeacherDTOSaveRequest;
 import com.studentManagement.model.DTO.request.TeacherDTOUpdateRequest;
 import com.studentManagement.model.DTO.response.TeacherDTOResponse;
 import com.studentManagement.model.Lesson;
-import com.studentManagement.model.SchoolConfig;
+import com.studentManagement.config.SchoolConfig;
 import com.studentManagement.model.Teacher;
 import com.studentManagement.repository.TeacherRepository;
 import com.studentManagement.service.TeacherService;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
