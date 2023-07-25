@@ -32,7 +32,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 255)
+//    @Column(name = "password", length = 255)
     private String password;
 
     @Builder.Default

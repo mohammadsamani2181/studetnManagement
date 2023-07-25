@@ -5,5 +5,6 @@ public enum SchoolRole {
     PRINCIPAL,
     PRINCIPAL_ASSISTANT,
     TEACHER,
-    STUDENT;
+    STUDENT,
+    USER;
 }

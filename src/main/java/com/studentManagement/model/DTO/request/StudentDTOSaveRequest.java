@@ -1,6 +1,7 @@
 package com.studentManagement.model.DTO.request;
 
 import com.studentManagement.model.StudentLevel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "StudentSaveRequest")
 public class StudentDTOSaveRequest {
     @NotNull(message = "firstName field cannot be null!!")
     private String firstName;

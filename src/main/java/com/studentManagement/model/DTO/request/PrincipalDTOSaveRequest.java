@@ -1,5 +1,6 @@
 package com.studentManagement.model.DTO.request;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Hidden
 public class PrincipalDTOSaveRequest {
     @NotNull(message = "firstName field cannot be null!!")
     private String firstName;

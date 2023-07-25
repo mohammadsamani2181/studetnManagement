@@ -1,0 +1,29 @@
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{correlationId}]  - %msg%n"/>
+        </Console>
+
+        <File name="File" fileName="application.log">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{correlationId}]  - %msg%n"/>
+        </File>
+        <!--        <File name="Filee" fileName="applicationn.log">-->
+        <!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />-->
+        <!--        </File>-->
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console" level="ERROR"/>
+            <AppenderRef ref="File" level="INFO"/>
+        </Root>
+        <!--        <Logger name="com.studentManagement.controller">-->
+        <!--            <AppenderRef ref="File" level="INFO" />-->
+        <!--        </Logger>-->
+        <!--        <Logger name="com.studentManagement.service">-->
+        <!--            <AppenderRef ref="Filee" level="ERROR" />-->
+        <!--        </Logger>-->
+    </Loggers>
+</Configuration>

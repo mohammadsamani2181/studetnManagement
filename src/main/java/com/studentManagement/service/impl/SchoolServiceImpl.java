@@ -2,12 +2,11 @@ package com.studentManagement.service.impl;
 
 import com.studentManagement.config.ApplicationConfig;
 import com.studentManagement.config.PrincipalConfig;
+import com.studentManagement.config.SchoolConfig;
 import com.studentManagement.model.DTO.request.SchoolDTOUpdateRequest;
 import com.studentManagement.model.DTO.response.SchoolDTOResponse;
 import com.studentManagement.model.Principal;
 import com.studentManagement.model.School;
-import com.studentManagement.config.SchoolConfig;
-import com.studentManagement.model.SchoolRole;
 import com.studentManagement.model.User;
 import com.studentManagement.repository.PrincipalRepository;
 import com.studentManagement.repository.SchoolRepository;
@@ -16,11 +15,9 @@ import com.studentManagement.service.PrincipalService;
 import com.studentManagement.service.SchoolService;
 import com.studentManagement.service.mapper.SchoolDTOResponseMapper;
 import com.studentManagement.service.validator.SchoolValidator;
+import com.studentManagement.utils.ServiceUtils;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Service("SchoolServiceImpl")
 public class SchoolServiceImpl implements SchoolService {
@@ -82,20 +79,16 @@ public class SchoolServiceImpl implements SchoolService {
         System.out.println("here2");
         if (userRepository.getAdmin().isEmpty()) {
             System.out.println("here3");
-            Set<SchoolRole> authorities = new HashSet<>();
-            authorities.add(SchoolRole.ADMIN);
-            authorities.add(SchoolRole.PRINCIPAL);
-            authorities.add(SchoolRole.PRINCIPAL_ASSISTANT);
-            authorities.add(SchoolRole.TEACHER);
-            authorities.add(SchoolRole.STUDENT);
 
             User user = User.builder()
                     .firstName("Admin")
                     .lastName("Admin")
                     .email("Admin@Gmail.com")
                     .password(applicationConfig.passwordEncoder().encode("AdminPassword"))
-                    .roles(authorities)
+                    .ssoId(123L)
                     .build();
+
+            ServiceUtils.makeAdmin(user);
 
             userRepository.saveAndFlush(user);
         }
@@ -109,8 +102,8 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public SchoolDTOResponse updateSchool(SchoolDTOUpdateRequest schoolDTOUpdateRequest) {
 
-        return schoolDTOResponseMapper.apply(schoolRepository.save(
-                schoolValidator.updateSchool(schoolConfig.getSchool(), schoolDTOUpdateRequest)
-        ));
+        School school = schoolValidator.updateSchool(schoolConfig.getSchool(), schoolDTOUpdateRequest);
+
+        return schoolDTOResponseMapper.apply(schoolRepository.save(school));
     }
 }

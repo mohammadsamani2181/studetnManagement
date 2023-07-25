@@ -1,5 +1,7 @@
 package com.studentManagement.model.DTO.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter
@@ -7,7 +9,10 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "AuthenticationRequest")
 public class AuthenticationDTORequest {
-  private String email;
-  private String password;
+    @NotNull(message = "authentication.email.is.required")
+    private String email;
+    @NotNull(message = "Password field cannot be null")
+    private String password;
 }

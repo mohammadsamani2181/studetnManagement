@@ -1,5 +1,6 @@
 package com.studentManagement.model.DTO.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(name = "StudentResponse")
 public class StudentDTOResponse {
     private Long id;
     private String firstName;

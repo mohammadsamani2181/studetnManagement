@@ -1,8 +1,8 @@
 package com.studentManagement.service.validator;
 
 import com.studentManagement.config.ApplicationConfig;
-import com.studentManagement.model.DTO.request.PrincipalDTOUpdateRequest;
 import com.studentManagement.model.Principal;
+import com.studentManagement.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,43 +13,38 @@ public class PrincipalValidator {
         this.applicationConfig = applicationConfig;
     }
 
-    public Principal updatePrincipal(Principal oldPrincipal, PrincipalDTOUpdateRequest newPrincipal) {
+    public Principal updatePrincipal(Principal oldPrincipal, User principalInfo) {
         oldPrincipal.setFirstName(
-                newPrincipal.getFirstName() == null || newPrincipal.getFirstName().trim().isEmpty() ?
-                        oldPrincipal.getFirstName() : newPrincipal.getFirstName()
+                principalInfo.getFirstName() == null || principalInfo.getFirstName().trim().isEmpty() ?
+                        oldPrincipal.getFirstName() : principalInfo.getFirstName()
         );
 
         oldPrincipal.setLastName(
-                newPrincipal.getLastName() == null || newPrincipal.getLastName().trim().isEmpty() ?
-                        oldPrincipal.getLastName() : newPrincipal.getLastName()
+                principalInfo.getLastName() == null || principalInfo.getLastName().trim().isEmpty() ?
+                        oldPrincipal.getLastName() : principalInfo.getLastName()
         );
 
         oldPrincipal.setEmail(
-                newPrincipal.getEmail() == null || newPrincipal.getEmail().trim().isEmpty() ?
-                        oldPrincipal.getEmail() : newPrincipal.getEmail()
+                principalInfo.getEmail() == null || principalInfo.getEmail().trim().isEmpty() ?
+                        oldPrincipal.getEmail() : principalInfo.getEmail()
         );
 
         oldPrincipal.setPassword(
-                newPrincipal.getPassword() == null || newPrincipal.getPassword().trim().isEmpty() ?
-                        oldPrincipal.getPassword() : newPrincipal.getPassword()
+                principalInfo.getPassword() == null || principalInfo.getPassword().trim().isEmpty() ?
+                        oldPrincipal.getPassword() : principalInfo.getPassword()
         );
 
-        updateUser(oldPrincipal);
+        updateUser(oldPrincipal, principalInfo);
 
         return oldPrincipal;
     }
 
-    private void updateUser(Principal principal) {
-//        return User.builder()
-//                .firstName(principal.getFirstName())
-//                .lastName(principal.getLastName())
-//                .email(principal.getEmail())
-//                .password(applicationConfig.passwordEncoder().encode(principal.getPassword()))
-//                .build();
-
-        principal.getInfo().setFirstName(principal.getFirstName());
-        principal.getInfo().setLastName(principal.getLastName());
-        principal.getInfo().setEmail(principal.getEmail());
-        principal.getInfo().setPassword(applicationConfig.passwordEncoder().encode(principal.getPassword()));
+    private void updateUser(Principal principal, User principalInfo) {
+        User user = principal.getInfo();
+        user.setFirstName(principalInfo.getFirstName());
+        user.setLastName(principalInfo.getLastName());
+        user.setEmail(principalInfo.getEmail());
+        user.setSsoId(principalInfo.getSsoId());
+//        user.setPassword(applicationConfig.passwordEncoder().encode(principalInfo.getPassword()));
     }
 }
