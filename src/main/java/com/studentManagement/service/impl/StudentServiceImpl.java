@@ -1,19 +1,32 @@
 package com.studentManagement.service.impl;
 
-import com.studentManagement.exception.sourceNotFoundException;
+import com.studentManagement.model.DTO.request.IdDTORequest;
+import com.studentManagement.model.DTO.request.StudentDTOSaveRequest;
+import com.studentManagement.model.DTO.response.StudentDTOResponse;
+import com.studentManagement.model.Lesson;
+import com.studentManagement.config.SchoolConfig;
 import com.studentManagement.model.Student;
-import com.studentManagement.model.StudentLevel;
+import com.studentManagement.model.Teacher;
 import com.studentManagement.repository.StudentRepository;
-import com.studentManagement.service.GradeStudent;
 import com.studentManagement.service.StudentService;
-import jakarta.annotation.PostConstruct;
+
+import com.studentManagement.service.mapper.StudentDTOResponseMapper;
+import com.studentManagement.service.mapper.StudentDTOSaveRequestMapper;
+import com.studentManagement.service.validator.LessonValidator;
+import com.studentManagement.service.validator.StudentValidator;
+import com.studentManagement.service.validator.TeacherValidator;
+import org.springframework.http.HttpStatus;
+
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Service
 @EnableScheduling
@@ -21,96 +34,130 @@ import java.util.stream.Stream;
 public class StudentServiceImpl implements StudentService {
 
     private StudentRepository studentRepository;
+    private StudentDTOResponseMapper studentDTOResponseMapper;
+    private StudentDTOSaveRequestMapper studentDTOSaveRequestMapper;
+    private StudentValidator studentValidator;
+    private LessonValidator lessonValidator;
+    private TeacherValidator teacherValidator;
+    private SchoolConfig schoolConfig;
 
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, StudentDTOResponseMapper studentDTOResponseMapper, StudentDTOSaveRequestMapper studentDTOSaveRequestMapper, StudentValidator studentValidator, LessonValidator lessonValidator, TeacherValidator teacherValidator) {
         this.studentRepository = studentRepository;
+        this.studentDTOResponseMapper = studentDTOResponseMapper;
+        this.studentDTOSaveRequestMapper = studentDTOSaveRequestMapper;
+        this.studentValidator = studentValidator;
+        this.lessonValidator = lessonValidator;
+        this.teacherValidator = teacherValidator;
+        schoolConfig = SchoolConfig.getInstance();
     }
 
     @Override
-    public Student saveStudent(Student student) {
-        chooseStrategy(student);
+    public StudentDTOResponse saveStudent(StudentDTOSaveRequest studentDTOSaveRequest) {
+        Student student = studentDTOSaveRequestMapper.apply(studentDTOSaveRequest);
+        studentValidator.chooseStrategy(student);
 
-        return studentRepository.save(student);
+        IdDTORequest idDTORequestLessons = IdDTORequest.builder().idList(studentDTOSaveRequest.getLessonsIdList()).build();
+        Set<Lesson> lessons = lessonValidator.checkAndGetLessons(idDTORequestLessons);
+
+        Teacher teacher = null;
+        if (studentDTOSaveRequest.getTeacherId() != null) {
+            teacher = teacherValidator.checkAndGetTeacher(studentDTOSaveRequest.getTeacherId()).get();
+        }
+
+        student.setSchool(schoolConfig.getSchool());
+        student.setLessons(lessons);
+
+        if (teacher != null) {
+            student.setTeacher(teacher);
+        }
+
+        return studentDTOResponseMapper.apply(studentRepository.save(student));
     }
 
     @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
-    @Override
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id).orElseThrow(
-                () -> new sourceNotFoundException("Student", "Id", id)
-        );
+    public List<StudentDTOResponse> getAllStudents() {
+        return studentRepository.findAll()
+                .stream()
+                .map(studentDTOResponseMapper)
+                .collect(Collectors.toList());
     }
 
 
-    //*********** question: is it better to call another method? **********
-    @Override
-    public Student updateStudent(Long id, Student newStudent) {
-        Student existingStudent = studentRepository.findById(id).orElseThrow(
-                () -> new sourceNotFoundException("Student", "Id", id)
-        );
-        chooseStrategy(newStudent);
-
-        existingStudent.setFirstName(newStudent.getFirstName());
-        existingStudent.setLastName(newStudent.getLastName());
-        existingStudent.setEmail(newStudent.getEmail());
-        existingStudent.setScore(newStudent.getScore());
-
-        return studentRepository.save(existingStudent);
-    }
-
-    @Override
-    public void deleteStudentById(Long id) {
-        Student existingStudent = studentRepository.findById(id).orElseThrow(
-                () -> new sourceNotFoundException("Student", "Id", id)
-        );
-        studentRepository.delete(existingStudent);
-    }
 
     @Override
 //    @Scheduled(fixedRate = 10000)
     public void printSpecificStudents() {
         List<Student> students = findAllStudents();
-       filterList(students).forEach(System.out::println);
+        filterList(students).forEach(System.out::println);
     }
 
-    public List<Student> findAllStudents() {
+    @Override
+    public StudentDTOResponse addLessons(IdDTORequest lessonsIdList, Long studentId)
+            throws ResponseStatusException{
+
+        Optional<Student> student = studentValidator.checkAndGetStudent(studentId);
+        if (student.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no Student with the given id!");
+        }
+
+        Set<Lesson> lessons = lessonValidator.checkAndGetLessons(lessonsIdList);
+        if (lessons == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You didn't give any Lessons id.Please enter some ids!");
+        }
+
+        student.get().getLessons().addAll(lessons);
+
+        return studentDTOResponseMapper.apply(studentRepository.save(student.get()));
+
+    }
+
+    @Override
+    public StudentDTOResponse deleteLesson(Long lessonId, Long studentId) {
+        Optional<Student> student = studentValidator.checkAndGetStudent(studentId);
+        if (student.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no Student with the given id!");
+        }
+
+
+        Optional<Lesson> lesson = lessonValidator.checkAndGetLesson(lessonId);
+        if (lesson.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no Lesson with the given id!");
+        }
+
+        student.get().deleteLesson(lesson.get());
+
+        return studentDTOResponseMapper.apply(studentRepository.save(student.get()));
+    }
+
+    @Override
+    public StudentDTOResponse addOrUpdateTeacher(IdDTORequest teacherId, Long studentId) {
+        Optional<Student> student = studentValidator.checkAndGetStudent(studentId);
+        if (student.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no Student with the given id!");
+        }
+
+        Optional<Teacher> teacher = teacherValidator.checkAndGetTeacher(teacherId.getId());
+        if (teacher.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no Teacher with the given id!");
+        }
+
+        student.get().setTeacher(teacher.get());
+
+        return studentDTOResponseMapper.apply(studentRepository.save(student.get()));
+    }
+
+    private List<Student> findAllStudents() {
         List<Student> students = studentRepository.findAllStudents();
         return students;
     }
 
-    private Stream<Long> filterList(List<Student> students) {
-        return students.stream().filter(e -> e.getFirstName().contains("ali")).map(Student::getId);
-    }
-
-    @PostConstruct
-    private void printAllTheStudents() {
-        List<Student> students = findAllStudents();
-        for (Student student : students) {
-            System.out.println(student);
-        }
-    }
-
-    private void chooseStrategy(Student student) {
-        GradeStudent strategy = null;
-        if (student.getStudentLevel() == StudentLevel.GENIUS) {
-            strategy = new GradeGeniusStudent();
-        }
-        else if (student.getStudentLevel() == StudentLevel.WEAK){
-            strategy = new GradeWeakStudent();
-        }
-        else {
-            strategy = new GradeStudent() {
-                @Override
-                public int grade() {
-                    return GradeStudent.super.grade();
-                }
-            };
-        }
-
-        student.setScore(strategy.grade());
+    private List<Student> filterList(List<Student> students) {
+        return students.stream().filter(e -> e.getFirstName().contains("ali")).toList();
     }
 }

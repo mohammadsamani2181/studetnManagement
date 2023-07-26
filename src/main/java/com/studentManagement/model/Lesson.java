@@ -2,15 +2,19 @@ package com.studentManagement.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@SuperBuilder
 @Entity
 @Table(name = "studentM_Lesson")
 @Getter
 @Setter
-//@NoArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class Lesson extends BaseEntity{
     @Column(name = "type", nullable = false)
@@ -26,20 +30,17 @@ public class Lesson extends BaseEntity{
                 fetch = FetchType.LAZY,
                 cascade = {CascadeType.DETACH, CascadeType.PERSIST},
                 mappedBy = "lessons")
-    private List<Student> students = new ArrayList<>();
+    private Set<Student> students = new HashSet<>();
 
     @Builder.Default
     @ManyToMany(targetEntity = Teacher.class,
                 fetch = FetchType.LAZY,
                 cascade = {CascadeType.DETACH, CascadeType.PERSIST},
                 mappedBy = "lessons")
-    private List<Teacher> teachers = new ArrayList<>();
+    private Set<Teacher> teachers = new HashSet<>();
 
     public Lesson(LessonType type, LessonSubject subject) {
         this.type = type;
         this.subject = subject;
-    }
-
-    public Lesson() {
     }
 }

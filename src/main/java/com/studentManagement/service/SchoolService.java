@@ -1,11 +1,9 @@
 package com.studentManagement.service;
 
-import com.studentManagement.model.School;
-import com.studentManagement.repository.SchoolRepository;
-
-import java.util.List;
+import com.studentManagement.model.DTO.request.SchoolDTOUpdateRequest;
+import com.studentManagement.model.DTO.response.SchoolDTOResponse;
 
 public interface SchoolService {
-    School getTheSchool();
-    School saveOrUpdateSchool(School school);
+
+    SchoolDTOResponse updateSchool(SchoolDTOUpdateRequest schoolDTOUpdateRequest);
 }

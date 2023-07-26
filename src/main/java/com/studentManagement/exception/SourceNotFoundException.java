@@ -1,11 +1,13 @@
 package com.studentManagement.exception;
 
-public class sourceNotFoundException extends RuntimeException{
+import java.util.function.Supplier;
+
+public class SourceNotFoundException extends RuntimeException {
     private String resourceName;
     private String fieldName;
     private Object fieldValue;
 
-    public sourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
+    public SourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
         super(resourceName + "not found with " + fieldName + ":" + fieldValue);
         this.resourceName = resourceName;
         this.fieldName = fieldName;
